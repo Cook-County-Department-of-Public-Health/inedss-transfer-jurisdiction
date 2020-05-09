@@ -1,0 +1,73 @@
+---
+title: ''
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(magrittr)
+library(readr)
+library(devtools)
+
+#set pathnames
+if (dir.exists("/Users/hannahsteinberg/Downloads/")){
+  
+  downloads_path = "/Users/hannahsteinberg/Downloads/"
+  data_path = "/Users/hannahsteinberg/Documents/CSTE/work/covid19/data/"
+  
+} else{
+  
+  downloads_path = "C:/Users/Kelley/Downloads/"
+  data_path = "C:/Users/Kelley/Documents/Work/COVID-19/"
+  
+}
+
+#Source rselenium functions
+devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/general-use-rselenium-functions.R?raw=TRUE")
+devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/inedss-rselenium-functions.R?raw=TRUE")
+```
+
+```{r data}
+
+already_transferred = read_csv(paste0(downloads_path, Sys.Date(), "covid_transfers.csv"),
+                     col_types = cols()) %>%
+  set_colnames(c("caseNumber", "transferCount")) %>%
+  filter(transferCount > 0)
+
+#read and clean BO report
+transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.csv"),
+                     col_types = cols()) %>%
+  rename(caseNumber = `State Case Number`,
+         address = `Address at Onset`,
+         outbreakID = `Outbreak ID`,
+         reporterComment = `Reporter Comment`,
+         fips = `FIPS County`,
+         county = `County at Onset`,
+         currentCounty = `Current County`) %>%
+  #filter(reporterComment == "Auto case entry") %>%
+  filter(county != "Cook" & fips != "17031" & 
+           county != "Out Of State" & is.na(outbreakID) &
+           !(caseNumber %in% already_transferred$caseNumber) )
+
+
+#get jurisdictions list from inside Transfer Case page
+# jurisdictions = rD$findElement(using = "css", value = "#jurisdiction")$selectTag()$text %>%
+#   as.data.frame() %>%
+#   set_colnames("selection") %>%
+#   mutate(county = gsub(" County.*$| Department of Public Health| Health Department| City/County| Public Health District", "", selection),
+#          county = gsub("Illinois Dept of Public Health Central Office", "IDPH", county)
+#          )%>%
+#   filter(!(selection %in% c("Cook County Jail for STDs Only", "Cook County Juvenile Det Center for STDs Only")))
+# write_csv(jurisdictions, "jurisdiction_selections_list.csv")
+
+
+
+```
+
+```{r transfer}
+
+```
+
+
