@@ -27,6 +27,7 @@ if (dir.exists("/Users/hannahsteinberg/Downloads/")){
 #Source rselenium functions
 devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/general-use-rselenium-functions.R?raw=TRUE")
 devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/inedss-rselenium-functions.R?raw=TRUE")
+source("transfer-selenium.R")
 ```
 
 ```{r data}
@@ -71,6 +72,18 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
 
 ```{r transfer}
 
+start_server()
+login_inedss()
+
+for(i in 1:nrow(transfers)){
+  caseNumber = transfers$caseNumber[i]
+  jurisdiction = transfers$county[i]
+  
+  transfer(caseNumber = caseNumber, jurisdiction = jurisdiction)
+  wait_page("My Cases")
+}
+
+stop_server()
 ```
 
 
