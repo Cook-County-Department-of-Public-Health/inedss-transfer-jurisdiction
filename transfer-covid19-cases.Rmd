@@ -45,11 +45,14 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
          reporterComment = `Reporter Comment`,
          fips = `FIPS County`,
          county = `County at Onset`,
-         currentCounty = `Current County`) %>%
+         currentCounty = `Current County`,
+         openDate = `Open Date`) %>%
+  mutate(openDate = as.Date(openDate, format = "%Y/%m/%d")) %>%
   #filter(reporterComment == "Auto case entry") %>%
   filter(county != "Cook" & fips != "17031" & 
            county != "Out Of State" & is.na(outbreakID) &
-           !(caseNumber %in% already_transferred$caseNumber) )
+           !(caseNumber %in% already_transferred$caseNumber) &
+           openDate > (Sys.Date() - 7))
 
 
 #get jurisdictions list from inside Transfer Case page
