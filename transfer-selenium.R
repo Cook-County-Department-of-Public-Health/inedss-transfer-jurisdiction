@@ -2,6 +2,9 @@ library(tidyverse)
 library(RSelenium)
 library(readr)
 
+devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/general-use-rselenium-functions.R?raw=TRUE")
+devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/inedss-rselenium-functions.R?raw=TRUE")
+
 
 #Helper function to get correct jurisdiction name
 jurisdiction_select = read_csv("jurisdiction_selections_list.csv", col_types = cols())
