@@ -1,6 +1,7 @@
 library(tidyverse)
 library(RSelenium)
 library(readr)
+library(devtools)
 
 #Source helper rselenium functions from github
 devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/general-use-rselenium-functions.R?raw=TRUE")

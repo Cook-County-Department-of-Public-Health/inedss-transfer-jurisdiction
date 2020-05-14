@@ -9,7 +9,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(magrittr)
 library(readr)
-library(devtools)
 
 #set inedss login credentials- only needs to be done once per user per computer
 #key_set("idph_username") #IDPH username
