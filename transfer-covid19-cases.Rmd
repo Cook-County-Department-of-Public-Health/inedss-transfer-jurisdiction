@@ -79,7 +79,7 @@ for(i in 1:nrow(transfers)){
   caseNumber = transfers$caseNumber[i]
   jurisdiction = transfers$county[i]
   
-  transfer(caseNumber = caseNumber, jurisdiction = jurisdiction)
+  transfer(caseNumber = caseNumber, transferTo = jurisdiction)
   wait_page("My Cases")
 }
 
