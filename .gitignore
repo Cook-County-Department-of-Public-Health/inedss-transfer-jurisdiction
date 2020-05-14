@@ -3,5 +3,4 @@
 .RData
 .Ruserdata
 *.Rproj
-daily-transferred-cases/
 .DS_Store
