@@ -11,17 +11,19 @@ library(magrittr)
 library(readr)
 library(devtools)
 
+#set inedss login credentials- only needs to be done once per user per computer
+#key_set("idph_username") #IDPH username
+#key_set("idph_portal") #IDPH password
+
 #set pathnames
 if (dir.exists("/Users/hannahsteinberg/Downloads/")){
   
   downloads_path = "/Users/hannahsteinberg/Downloads/"
-  data_path = "/Users/hannahsteinberg/Documents/CSTE/work/covid19/data/"
-  
+
 } else{
   
   downloads_path = "C:/Users/Kelley/Downloads/"
-  data_path = "C:/Users/Kelley/Documents/Work/COVID-19/"
-  
+
 }
 
 #Source rselenium functions
@@ -32,12 +34,13 @@ source("transfer-selenium.R")
 
 ```{r data}
 
+#read in list of cases that have already been transferred so we can avoid repeated transfers
 already_transferred = read_csv(paste0(downloads_path, Sys.Date(), "covid_transfers.csv"),
                      col_types = cols()) %>%
   set_colnames(c("caseNumber", "transferCount")) %>%
   filter(transferCount > 0)
 
-#read and clean BO report
+#read and clean BO report of cases assigned to CCDPH but have different counties listed
 transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.csv"),
                      col_types = cols()) %>%
   rename(caseNumber = `State Case Number`,
@@ -55,8 +58,28 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
            !(caseNumber %in% already_transferred$caseNumber) &
            openDate > (Sys.Date() - 7))
 
+```
 
-#get jurisdictions list from inside Transfer Case page
+
+```{r transfer}
+
+start_server() #start selenium server
+login_inedss() #login to inedss
+
+#loop to transfer all cases in transfers dataframe
+for(i in 1:nrow(transfers)){
+  caseNumber = transfers$caseNumber[i]
+  jurisdiction = transfers$county[i]
+  
+  transfer(caseNumber = caseNumber, transferTo = jurisdiction)
+  wait_page("My Cases")
+}
+
+stop_server()
+```
+
+```{r jurisdiction_selections_list}
+#get jurisdictions list from inside Transfer Case page of any case
 # jurisdictions = rD$findElement(using = "css", value = "#jurisdiction")$selectTag()$text %>%
 #   as.data.frame() %>%
 #   set_colnames("selection") %>%
@@ -69,21 +92,3 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
 
 
 ```
-
-```{r transfer}
-
-start_server()
-login_inedss()
-
-for(i in 1:nrow(transfers)){
-  caseNumber = transfers$caseNumber[i]
-  jurisdiction = transfers$county[i]
-  
-  transfer(caseNumber = caseNumber, transferTo = jurisdiction)
-  wait_page("My Cases")
-}
-
-stop_server()
-```
-
-
