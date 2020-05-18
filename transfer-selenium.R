@@ -41,6 +41,7 @@ fill_in_report_dates = function(){
   click("fieldset.fieldsetHeader:nth-child(4) > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(1) > a:nth-child(1)")
   Sys.sleep(2)
   wait_page("Reporting Source")
+  Sys.sleep(2)
   
   earliestReportMonth = get_text("#report", textbox = T)
   earliestReportDay = get_text(name.is("d1day"),textbox = T)
@@ -54,27 +55,35 @@ fill_in_report_dates = function(){
   if(phReceivedMonth !="" & earliestReportDay ==""){
     enter_text("#report", c(phReceivedMonth, phReceivedDay, phReceivedYear))
     Sys.sleep(2)
-    click(value.is("Save"))
-    return(1)
+
   }
   else if (phReceivedMonth =="" & earliestReportDay !=""){
     enter_text("#received", c(earliestReportMonth, earliestReportDay, earliestReportYear))
     Sys.sleep(2)
-    click(value.is("Save"))
-    return(1)
+
   }
   #If neither filled in, put error message for now
   else{
     message(paste(caseNumber, "needs Earliest Report Date or Date Public Health Received filled in.",
                   caseNumber, "has not been transferred."))
-    click(value.is("Close"))
-    return(NULL)
+    click(value.is("Cancel"))
+    return("DateNeeded")
     
   }
+  
+  #Make sure a reporting org is selected, if none, cancel
+  if(dropdown_is_na("#reportingOrg")){
+    click(value.is("Cancel"))
+    return("ReportingOrgNeeded")
+  }
+  
+  click(value.is("Save"))
+  return(1)
 }
 
 #helper function to write to log
 write_to_log = function(text, log=logfile){
+  message(text)
   write(text, file = log, append = T)
 }
 
@@ -112,7 +121,6 @@ transfer = function(caseNumber, transferTo,
   #If not currently a CCDPH case, can't transfer
   jur = get_text(".NoBorderFull > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2)")
   if(jur != "Cook County Department of Public Health"){
-    message(paste(caseNumber, "not transferred because already assigned to", jur))
     write_to_log(paste(caseNumber, "not transferred because already assigned to", jur))
     click(value.is("Close"))
     return()
@@ -141,8 +149,16 @@ transfer = function(caseNumber, transferTo,
     fill_in = fill_in_report_dates()
     
     #If neither earliest report date nor lhd received date is filled in, can't transfer
-    if(is.null(fill_in)){
-      write_to_log(caseNumber, "not transferred because neither Earliest Report Date nor Date LHD Received are filled in.")
+    if(fill_in == "DateNeeded"){
+      write_to_log(paste(caseNumber, "not transferred because neither Earliest Report Date nor Date LHD Received are filled in."))
+      wait_page("Case Summary")
+      click(value.is("Close"))
+      return()
+    }
+    if(fill_in == "ReportingOrgNeeded"){
+      write_to_log(paste(caseNumber, "not transferred because Reporting Organization is not filled in."))
+      wait_page("Case Summary")
+      click(value.is("Close"))
       return()
     }
     
@@ -163,6 +179,5 @@ transfer = function(caseNumber, transferTo,
   #Accept alert
   acceptAlertwithWait()
   
-  message(paste(caseNumber, "transferred to", jurisdiction))
   write_to_log(paste(caseNumber, "transferred to", jurisdiction))
 }
