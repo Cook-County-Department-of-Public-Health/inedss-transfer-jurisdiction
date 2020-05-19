@@ -84,9 +84,21 @@ stop_server()
 #   mutate(county = gsub(" County.*$| Department of Public Health| Health Department| City/County| Public Health District", "", selection),
 #          county = gsub("Illinois Dept of Public Health Central Office", "IDPH", county)
 #          )%>%
-#   filter(!(selection %in% c("Cook County Jail for STDs Only", "Cook County Juvenile Det Center for STDs Only")))
+#   filter(!(selection %in% c("Cook County Jail for STDs Only", "Cook County Juvenile Det Center for STDs Only"))) %>%
+#   rbind(c("Dewitt - Piatt B/C Health Department", "Piatt")) %>%
+#   rbind(c("Dewitt - Piatt B/C Health Department", "Dewitt")) %>%
+#   rbind(c("Champaign-Urbana Public Health District", "Champaign")) %>%
+#   rbind(c("Southern Seven Health Department", "Alexander")) %>%
+#   rbind(c("Southern Seven Health Department", "Hardin")) %>%
+#   rbind(c("Southern Seven Health Department", "Johnson")) %>%
+#   rbind(c("Southern Seven Health Department", "Massac")) %>%
+#   rbind(c("Southern Seven Health Department", "Pope")) %>%
+#   rbind(c("Southern Seven Health Department", "Pulaski")) %>%
+#   rbind(c("Southern Seven Health Department", "Union")) %>%
+#   rbind(c("Franklin-Williamson B/C Health Department", "Franklin")) %>%
+#   rbind(c("Franklin-Williamson B/C Health Department", "Williamson")) 
+#
 # write_csv(jurisdictions, "jurisdiction_selections_list.csv")
-
 
 
 ```
