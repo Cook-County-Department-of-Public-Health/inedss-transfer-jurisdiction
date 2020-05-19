@@ -103,7 +103,8 @@ open_new_elr_case = function(){
 
 #Final function for transferring cases
 transfer = function(caseNumber, transferTo, 
-                    logfile = paste0("daily-transferred-cases/", Sys.Date(), "transferred_log.txt")){
+                    logfile = paste0("daily-transferred-cases/", Sys.Date(), "transferred_log.txt"),
+                    checkCook = T){
   
   #get transfer jurisdiction dropdown menu name
   jurisdiction = get_jurisdiction_dropdown_name(transferTo)
@@ -120,10 +121,18 @@ transfer = function(caseNumber, transferTo,
   
   #If not currently a CCDPH case, can't transfer
   jur = get_text(".NoBorderFull > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2)")
-  if(jur != "Cook County Department of Public Health"){
-    write_to_log(paste(caseNumber, "not transferred because already assigned to", jur))
-    click(value.is("Close"))
-    return()
+  if(checkCook){
+    if(jur != "Cook County Department of Public Health"){
+      write_to_log(paste(caseNumber, "not transferred because already assigned to", jur))
+      click(value.is("Close"))
+      return()
+    }
+  }else{
+    if(jur == jurisdiction){
+      write_to_log(paste(caseNumber, "not transferred because already assigned to", jur))
+      click(value.is("Close"))
+      return()
+    }
   }
   
   #If New ELR status, have to change to in-progress before you can transfer
