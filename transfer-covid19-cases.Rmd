@@ -64,6 +64,8 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
 start_server() #start selenium server
 login_inedss() #login to inedss
 
+logfile = paste0("daily-transferred-cases/", Sys.Date(), "transferred_log.txt")
+
 #loop to transfer all cases in transfers dataframe
 for(i in 1:nrow(transfers)){
   caseNumber = transfers$caseNumber[i]
