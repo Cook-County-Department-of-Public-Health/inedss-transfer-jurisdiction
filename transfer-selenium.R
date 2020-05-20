@@ -155,6 +155,16 @@ transfer = function(caseNumber, transferTo,
   error = try(get_text("#container > div:nth-child(4) > form:nth-child(3) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(4) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > center:nth-child(1)"),
               silent = T)
   
+  #If your error box says something about invalid characters, write to log and skip
+  if(grepl("invalid characters", error)){
+    invalid = gsub("The following invalid conditions were found:\n\n", "", error)
+    write_to_log(paste(caseNumber, "not transferred because", invalid))
+    click(value.is("Cancel"))
+    wait_page("Case Summary")
+    click(value.is("Close"))
+    return()
+  }
+  
   #If you get a box saying earliest report date or date lhd received is missing, go fix that
   if(grepl("Earliest Report Date and Date LHD Received are mandatory fields", error)){
     
@@ -182,15 +192,7 @@ transfer = function(caseNumber, transferTo,
     
   }
   
-  #If your error box says something about invalid characters, write to log and skip
-  if(grepl("invalid characters", error)){
-    invalid = gsub("The following invalid conditions were found:\n\n", "", error)
-    write_to_log(paste(caseNumber, "not transferred because", invalid))
-    click(value.is("Cancel"))
-    wait_page("Case Summary")
-    click(value.is("Close"))
-    return()
-  }
+
   
   
   #select jurisdiction from dropdown list
