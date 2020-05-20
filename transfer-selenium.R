@@ -141,9 +141,9 @@ transfer = function(caseNumber, transferTo,
     open_new_elr_case()
   }
   
-  #If status is Closed, write to log and move on
+  #If investigation status is Closed, write to log and move on
   if(investigation_status == "Closed"){
-    write_to_log(paste(caseNumber, "not transferred because case status is Closed."))
+    write_to_log(paste(caseNumber, "not transferred because investigation status is Closed."))
     click(value.is("Close"))
     return()
   }
