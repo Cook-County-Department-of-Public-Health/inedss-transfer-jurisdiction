@@ -141,6 +141,12 @@ transfer = function(caseNumber, transferTo,
     open_new_elr_case()
   }
   
+  #If status is Closed, write to log and move on
+  if(investigation_status == "Closed"){
+    write_to_log(paste(caseNumber, "not transferred because case status is Closed."))
+    click(value.is("Close"))
+    return()
+  }
   
   #click transfer case
   click("fieldset.fieldsetHeader:nth-child(6) > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2) > a:nth-child(1)")
@@ -174,6 +180,16 @@ transfer = function(caseNumber, transferTo,
     #click transfer case
     click("fieldset.fieldsetHeader:nth-child(6) > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2) > a:nth-child(1)")
     
+  }
+  
+  #If your error box says something about invalid characters, write to log and skip
+  if(grepl("invalid characters", error)){
+    invalid = gsub("The following invalid conditions were found:\n\n", "", error)
+    write_to_log(paste(caseNumber, "not transferred because", invalid))
+    click(value.is("Cancel"))
+    wait_page("Case Summary")
+    click(value.is("Close"))
+    return()
   }
   
   
