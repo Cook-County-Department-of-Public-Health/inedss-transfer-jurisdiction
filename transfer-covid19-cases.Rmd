@@ -45,16 +45,17 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
          address = `Address at Onset`,
          outbreakID = `Outbreak ID`,
          reporterComment = `Reporter Comment`,
-         fips = `FIPS County`,
+         #fips = `FIPS County`,
          county = `County at Onset`,
-         currentCounty = `Current County`,
-         openDate = `Open Date`) %>%
+         #currentCounty = `Current County`,
+         openDate = `Open Date`,
+         city = `City at Onset`) %>%
   mutate(openDate = as.Date(openDate, format = "%Y/%m/%d")) %>%
   #filter(reporterComment == "Auto case entry") %>%
-  filter(county != "Cook" & fips != "17031" & 
-           county != "Out Of State" & is.na(outbreakID) &
+  filter(county != "Out Of State" & is.na(outbreakID) &
            !(caseNumber %in% already_transferred$caseNumber) &
-           openDate > (Sys.Date() - 7))
+           openDate > (Sys.Date() - 14)) %>%
+  mutate(transferTo = ifelse(county == "Cook", city, county))
 
 ```
 
@@ -67,9 +68,9 @@ login_inedss() #login to inedss
 logfile = paste0("daily-transferred-cases/", Sys.Date(), "transferred_log.txt")
 
 #loop to transfer all cases in transfers dataframe
-for(i in 1:nrow(transfers)){
+for(i in 100:nrow(transfers)){
   caseNumber = transfers$caseNumber[i]
-  jurisdiction = transfers$county[i]
+  jurisdiction = transfers$transferTo[i]
   
   transfer(caseNumber = caseNumber, transferTo = jurisdiction)
   wait_page("My Cases")
