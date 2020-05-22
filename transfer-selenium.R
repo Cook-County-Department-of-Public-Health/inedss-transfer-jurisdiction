@@ -8,6 +8,8 @@ devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/
 devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/inedss-rselenium-functions.R?raw=TRUE")
 
 
+
+
 #Helper function to get correct jurisdiction name
 jurisdiction_select = read_csv("jurisdiction_selections_list.csv", col_types = cols())
 get_jurisdiction_dropdown_name = function(jurisdiction){
@@ -37,8 +39,9 @@ get_jurisdiction_dropdown_name = function(jurisdiction){
 fill_in_report_dates = function(){
   wait_page("Case Summary")
   
+  
   #Click into Reporting Source
-  click("fieldset.fieldsetHeader:nth-child(4) > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(5) > td:nth-child(1) > a:nth-child(1)")
+  click_link("Reporting Source")  
   Sys.sleep(2)
   wait_page("Reporting Source")
   Sys.sleep(2)
@@ -92,7 +95,7 @@ open_new_elr_case = function(){
   wait_page("Case Summary") #need to start on case summary page
   
   #click "Laboratory Tests"
-  click("fieldset.fieldsetHeader:nth-child(4) > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2) > a:nth-child(1)")
+  click_link("Laboratory Tests")
   
   #click save
   click(value.is("Save"))
@@ -149,7 +152,7 @@ transfer = function(caseNumber, transferTo,
   }
   
   #click transfer case
-  click("fieldset.fieldsetHeader:nth-child(6) > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2) > a:nth-child(1)")
+  click_link("Transfer Case")
   
   #Check to see if required fields are completed for transferring
   error = try(get_text("#container > div:nth-child(4) > form:nth-child(3) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(4) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > center:nth-child(1)"),
@@ -188,7 +191,7 @@ transfer = function(caseNumber, transferTo,
     }
     
     #click transfer case
-    click("fieldset.fieldsetHeader:nth-child(6) > table:nth-child(2) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(2) > a:nth-child(1)")
+    click_link("Transfer Case")
     
   }
   
