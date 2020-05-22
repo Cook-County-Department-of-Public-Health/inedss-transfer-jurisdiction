@@ -72,7 +72,7 @@ fill_in_report_dates = function(){
   }
   
   #Make sure a reporting org is selected, if none, cancel
-  if(dropdown_is_na("#reportingOrg")){
+  if(dropdown_is_na("#reportingOrg") & get_text("#otherReportingOrg", textbox = T) == ""){
     click(value.is("Cancel"))
     return("ReportingOrgNeeded")
   }
