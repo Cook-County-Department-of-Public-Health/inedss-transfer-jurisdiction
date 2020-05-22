@@ -38,6 +38,12 @@ already_transferred = read_csv(paste0(downloads_path, Sys.Date(), "covid_transfe
   set_colnames(c("caseNumber", "transferCount")) %>%
   filter(transferCount > 0)
 
+#don't transfer cases to chi unless they have a chi zip code
+chi_zips = c("60601", "60602","60603","60604","60605","60606","60607","60608","60609","60610",
+"60611","60612","60613","60614","60615","60616","60617","60618","60619","60620","60621","60622","60623","60624","60625","60626","60628","60629","60630","60631",
+"60632","60633","60634","60636","60637","60638","60639","60640","60641","60642","60643","60644","60645","60646","60647","60649","60651","60652","60653","60654",
+"60655","60656","60657","60659","60660","60661","60666","60707","60827","")
+
 #read and clean BO report of cases assigned to CCDPH but have different counties listed
 transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.csv"),
                      col_types = cols()) %>%
@@ -49,12 +55,15 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
          county = `County at Onset`,
          #currentCounty = `Current County`,
          openDate = `Open Date`,
-         city = `City at Onset`) %>%
+         city = `City at Onset`,
+         zip = `Zip at Onset`) %>%
   mutate(openDate = as.Date(openDate, format = "%Y/%m/%d")) %>%
   #filter(reporterComment == "Auto case entry") %>%
   filter(county != "Out Of State" & is.na(outbreakID) &
            !(caseNumber %in% already_transferred$caseNumber) &
-           openDate > (Sys.Date() - 14)) %>%
+           openDate > (Sys.Date() - 14) &
+           is.na(Investigator)) %>%
+  filter(!(city == "Chicago" & !(zip %in% chi_zips))) %>%
   mutate(transferTo = ifelse(county == "Cook", city, county))
 
 ```
@@ -68,7 +77,7 @@ login_inedss() #login to inedss
 logfile = paste0("daily-transferred-cases/", Sys.Date(), "transferred_log.txt")
 
 #loop to transfer all cases in transfers dataframe
-for(i in 100:nrow(transfers)){
+for(i in 1:nrow(transfers)){
   caseNumber = transfers$caseNumber[i]
   jurisdiction = transfers$transferTo[i]
   
