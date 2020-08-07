@@ -56,13 +56,18 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
          #currentCounty = `Current County`,
          openDate = `Open Date`,
          city = `City at Onset`,
-         zip = `Zip at Onset`) %>%
+         zip = `Zip at Onset`,
+         addressType = `Current Address Type`,
+         attendsResides = `Patient Attends/Resides`) %>%
   mutate(openDate = as.Date(openDate, format = "%Y/%m/%d")) %>%
   #filter(reporterComment == "Auto case entry") %>%
   filter(county != "Out Of State" & is.na(outbreakID) &
            !(caseNumber %in% already_transferred$caseNumber) &
            openDate > (Sys.Date() - 14) &
-           is.na(Investigator)) %>%
+           is.na(Investigator),
+         addressType == "Home" | is.na(addressType),
+         is.na(attendsResides)
+         ) %>%
   filter(!(city == "Chicago" & !(zip %in% chi_zips))) %>%
   mutate(transferTo = ifelse(county == "Cook", city, county))
 
