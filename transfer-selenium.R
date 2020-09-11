@@ -208,6 +208,7 @@ transfer = function(caseNumber, transferTo,
 
   #Accept alert
   acceptAlertwithWait()
+  Sys.sleep(3)
   
   write_to_log(paste(caseNumber, "transferred to", jurisdiction))
 }
