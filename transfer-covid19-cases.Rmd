@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(magrittr)
 library(readr)
+library(vroom)
 
 #set inedss login credentials- only needs to be done once per user per computer
 #key_set("idph_username") #IDPH username
@@ -79,16 +80,27 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
 start_server() #start selenium server
 login_inedss() #login to inedss
 
+# #Switching focus to INEDSS tab   
+# windows <- rD$getWindowHandles()   
+# rD$switchToWindow(windows[[2]])
+
 logfile = paste0("daily-transferred-cases/", Sys.Date(), "transferred_log.txt")
 
 #loop to transfer all cases in transfers dataframe
-for(i in 1:nrow(transfers)){
-  caseNumber = transfers$caseNumber[i]
-  jurisdiction = transfers$transferTo[i]
-  
-  transfer(caseNumber = caseNumber, transferTo = jurisdiction, logfile = logfile)
-  wait_page("My Cases")
+continue = TRUE
+c = 1
+while(continue){ #for loop sometimes errors out, so put inside while
+  try(for(i in c:nrow(transfers)){
+    caseNumber = transfers$caseNumber[i]
+    jurisdiction = transfers$transferTo[i]
+    
+    transfer(caseNumber = caseNumber, transferTo = jurisdiction, logfile = logfile)
+    wait_page("My Cases")
+  })
+  c = (vroom(logfile, col_names = FALSE) %>% nrow()) + 1
+  continue = ifelse(c <= nrow(transfers), TRUE, FALSE)
 }
+
 
 stop_server()
 ```
