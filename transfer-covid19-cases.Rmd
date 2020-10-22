@@ -11,10 +11,7 @@ library(magrittr)
 library(readr)
 library(vroom)
 
-#set inedss login credentials- only needs to be done once per user per computer
-#key_set("idph_username") #IDPH username
-#key_set("idph_portal") #IDPH password
-#also may need to make a daily-transferred-cases folder in your directory if not already there if you want to store your logs there and don't specify where the logs go
+
 
 #set pathnames
 if (dir.exists("/Users/hannahsteinberg/Downloads/")){
@@ -76,6 +73,12 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
 
 
 ```{r transfer}
+#set inedss login credentials- only needs to be done once per user per computer
+#key_set("idph_username") #IDPH username
+#key_set("idph_portal") #IDPH password
+#also may need to make a daily-transferred-cases folder in your directory if not already there if you want to store your logs there and don't specify where the logs go
+#dir.create("daily-transferred-cases")
+
 
 start_server() #start selenium server
 login_inedss() #login to inedss
