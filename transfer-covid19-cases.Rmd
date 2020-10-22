@@ -97,7 +97,9 @@ while(continue){ #for loop sometimes errors out, so put inside while
     transfer(caseNumber = caseNumber, transferTo = jurisdiction, logfile = logfile)
     wait_page("My Cases")
   })
-  c = (vroom(logfile, col_names = FALSE) %>% nrow()) + 1
+  #c = number of unique case numbers in logfile + 1
+  c = (vroom(logfile, col_names = FALSE) %>% 
+         filter(grepl("20\\-", X1)) %>% pull(X1) %>% unique() %>% length()) + 1
   continue = ifelse(c <= nrow(transfers), TRUE, FALSE)
 }
 
