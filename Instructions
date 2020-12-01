@@ -2,8 +2,10 @@ Intstructions
 
 1. Download today's "covid_other_counties.csv" and "covid_transfers.csv" form Business Objects (ask Hannah Steinberg for access to these if needed)
 
-2. Run transfer-covid19-cases.Rmd
-    a. Run setup chunk and make sure your downloads path is an option when setting pathnames
+2. Make sure you have a folder in your working directory called "daily-transferred-cases" and you have a key set called "downloads_path" which leads to your downloads folder
+
+3. Run transfer-covid19-cases.Rmd
+    a. Run setup chunk
     b. Run data chunk 
     c. Open the newly created "transfers" data table and look through the reporter and epi comments to make sure there's nothing in there that shouldn't be transferred
     d. Run the transfer chunk one line at a time. (See comments at the top of the chunk if it's your first time running this code and you need to add your IDPH Web Portal credentials or create the directory for your log files)

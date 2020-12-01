@@ -11,19 +11,11 @@ library(magrittr)
 library(readr)
 library(vroom)
 library(devtools)
-
+library(keyring)
 
 
 #set pathnames
-if (dir.exists("/Users/hannahsteinberg/Downloads/")){
-  
-  downloads_path = "/Users/hannahsteinberg/Downloads/"
-
-} else{
-  
-  downloads_path = "C:/Users/Kelley/Downloads/"
-
-}
+downloads_path = key_get("downloads_path")
 
 #Source rselenium functions
 source("transfer-selenium.R")
