@@ -10,6 +10,7 @@ library(tidyverse)
 library(magrittr)
 library(readr)
 library(vroom)
+library(devtools)
 
 
 
@@ -26,6 +27,7 @@ if (dir.exists("/Users/hannahsteinberg/Downloads/")){
 
 #Source rselenium functions
 source("transfer-selenium.R")
+devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/general-use-rselenium-functions.R?raw=TRUE")
 ```
 
 ```{r data}
@@ -35,6 +37,18 @@ already_transferred = read_csv(paste0(downloads_path, Sys.Date(), "covid_transfe
                      col_types = cols()) %>%
   set_colnames(c("caseNumber", "transferCount")) %>%
   filter(transferCount > 0)
+
+#read in transfer logs from last week
+last_week = (Sys.Date()-7):Sys.Date() %>% as.Date(origin = "1970-01-01") %>%
+  paste0( ., "transferred_log.txt")
+transferred_files = list.files("daily-transferred-cases") %>%
+  intersect(last_week)
+already_transferred_logs = lapply(paste0("daily-transferred-cases/",transferred_files), function(x){
+  vroom(x, col_names = F) %>%
+    pull(X1)
+}) %>%
+  unlist()
+
 
 #don't transfer cases to chi unless they have a chi zip code
 chi_zips = c("60601", "60602","60603","60604","60605","60606","60607","60608","60609","60610",
@@ -61,6 +75,7 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
   #filter(reporterComment == "Auto case entry") %>%
   filter(county != "Out Of State" & is.na(outbreakID) &
            !(caseNumber %in% already_transferred$caseNumber) &
+           !(caseNumber %in% already_transferred_logs) &
            openDate > (Sys.Date() - 14) &
            is.na(Investigator),
          addressType == "Home" | is.na(addressType),
@@ -104,6 +119,7 @@ while(continue){ #for loop sometimes errors out, so put inside while
   c = (vroom(logfile, col_names = FALSE) %>% 
          filter(grepl("20\\-", X1)) %>% pull(X1) %>% unique() %>% length()) + 1
   continue = ifelse(c <= nrow(transfers), TRUE, FALSE)
+  print(Sys.time())
 }
 
 
