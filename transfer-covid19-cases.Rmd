@@ -95,6 +95,7 @@ login_inedss() #login to inedss
 # rD$switchToWindow(windows[[2]])
 
 logfile = paste0("daily-transferred-cases/", Sys.Date(), "transferred_log.txt")
+if(!file.exists(logfile)){close(file( logfile, open="w" ))} #initialize logfile
 
 #loop to transfer all cases in transfers dataframe
 continue = TRUE
