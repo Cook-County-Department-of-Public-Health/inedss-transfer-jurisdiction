@@ -96,6 +96,7 @@ login_inedss() #login to inedss
 
 logfile = paste0("daily-transferred-cases/", Sys.Date(), "transferred_log.txt")
 if(!file.exists(logfile)){close(file(logfile, open="w"))} #initialize logfile
+file.edit(logfile) #open file so you can track where you are
 
 #loop to transfer all cases in transfers dataframe
 continue = TRUE
@@ -110,13 +111,14 @@ while(continue){ #for loop sometimes errors out, so put inside while
   })
   #c = number of unique case numbers in logfile + 1
   c = (vroom(logfile, col_names = FALSE) %>% 
-         filter(grepl("20\\-", X1)) %>% pull(X1) %>% unique() %>% length()) + 1
+         filter(grepl("2\\d\\-", X1)) %>% pull(X1) %>% unique() %>% length()) + 1
   continue = ifelse(c <= nrow(transfers), TRUE, FALSE)
   print(Sys.time())
 }
 
 
 stop_server()
+
 ```
 
 ```{r jurisdiction_selections_list}
