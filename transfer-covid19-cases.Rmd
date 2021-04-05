@@ -18,8 +18,9 @@ library(keyring)
 downloads_path = key_get("downloads_path")
 
 #Source rselenium functions
-source("transfer-selenium.R")
 devtools::source_url("https://github.com/hsteinberg/ccdph-functions/blob/master/general-use-rselenium-functions.R?raw=TRUE")
+source("transfer-selenium.R")
+
 ```
 
 ```{r data}
@@ -87,7 +88,7 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
 #dir.create("daily-transferred-cases")
 
 
-start_server() #start selenium server
+start_server(2) #start selenium server
 login_inedss() #login to inedss
 
 # #Switching focus to INEDSS tab   
@@ -96,7 +97,7 @@ login_inedss() #login to inedss
 
 logfile = paste0("daily-transferred-cases/", Sys.Date(), "transferred_log.txt")
 if(!file.exists(logfile)){close(file(logfile, open="w"))} #initialize logfile
-file.edit(logfile) #open file so you can track where you are
+#file.edit(logfile) #open file so you can track where you are
 
 #loop to transfer all cases in transfers dataframe
 continue = TRUE
