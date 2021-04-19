@@ -88,7 +88,7 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
 #dir.create("daily-transferred-cases")
 
 
-start_server(2) #start selenium server
+start_server() #start selenium server
 login_inedss() #login to inedss
 
 # #Switching focus to INEDSS tab   
