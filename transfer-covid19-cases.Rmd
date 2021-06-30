@@ -69,7 +69,7 @@ transfers = read_csv(paste0(downloads_path, Sys.Date(), "covid_other_counties.cs
   filter(county != "Out Of State" & is.na(outbreakID) &
            !(caseNumber %in% already_transferred$caseNumber) &
            !(caseNumber %in% already_transferred_logs) &
-           openDate > (Sys.Date() - 14) &
+           openDate > (Sys.Date() - 30) &
            is.na(Investigator),
          addressType == "Home" | is.na(addressType),
          is.na(attendsResides)
@@ -121,6 +121,14 @@ while(continue){ #for loop sometimes errors out, so put inside while
 stop_server()
 
 ```
+```{r delete-downloads}
+to_delete = list.files(downloads_path, pattern = "covid_transfers.csv|covid_other_counties.csv", full.names = T)
+for(i in 1:length(to_delete)){
+  unlink(to_delete[i])
+}
+
+```
+
 
 ```{r jurisdiction_selections_list}
 #get jurisdictions list from inside Transfer Case page of any case
